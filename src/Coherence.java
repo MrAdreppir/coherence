@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by Daan on 30-Nov-16.
@@ -14,32 +11,129 @@ public class Coherence {
     private ArrayList<Edge> positive;
     private ArrayList<Edge> negative;
 
-    private ArrayList<Map<Vertex, Integer>> special; // special vertices (d coherence)
+    private Map<Vertex, Integer> special; // special vertices (d coherence)
 
-    private ArrayList<Vertex> temp; // temporary dividing of vertices into accepted (the vertices that are not in temp are in rejected at that specific moment)
-    private ArrayList<Vertex> fin; // final/best truth/false assignment
+    //private ArrayList<Vertex> temp; // temporary dividing of vertices into accepted (the vertices that are not in temp are in rejected at that specific moment)
+    //private ArrayList<Vertex> fin; // final/best truth/false assignment
 
     private ArrayList<Vertex> vertices; // all the vertices of the graph
     private ArrayList<Edge> edges; // all the edges of the graph
+    private ArrayList<ArrayList<Vertex>> subgroups;
 
     private Random random = new Random();
 
+    private int coherence;
+
     public Coherence() {
         createCompleteGraph(4);
-        System.out.println("Positive:");
-        for (Edge e : positive) {
-            System.out.println(e);
-        }
-        System.out.println("Negative:");
-        for (Edge e : negative) {
-            System.out.println(e);
-        }
+
         vertices = (ArrayList<Vertex>) graph.getVertices();
         edges = (ArrayList<Edge>) graph.getEdges();
-
+        subgroups = getSubgroups(vertices);
+        setSpecialVertices(new ArrayList<Vertex>(), new ArrayList<Integer>());
+        coherence = exhaust(subgroups);
+        System.out.println(coherence);
         // for every possible length the list of accepted vertices can have
-        for(int i = 0; i < 5; i++)
-            coherence_exhaustive(temp,0,i,0);
+//        for(int i = 0; i < 5; i++)
+//            coherence_exhaustive(temp,0,i,0);
+    }
+
+    private void printTruthAssignment(ArrayList<Vertex> trueVertices) {
+        for (Edge e : edges) {
+            Vertex v1 = e.getV1();
+            Vertex v2 = e.getV2();
+            String out = "";
+            out += 'V' + v1.getId();
+            if (trueVertices.contains(v1))
+                out += " 1 ";
+            else
+                out += " 0 ";
+            if (positive.contains(e))
+                out += "-----";
+            else
+                out += "- - -";
+            out += 'V' + v2.getId();
+            if (trueVertices.contains(v2))
+                out += " 1 ";
+            else
+                out += " 0 ";
+            System.out.println(out);
+        }
+    }
+
+    private void setSpecialVertices(ArrayList<Vertex> specialVertices, ArrayList<Integer> weights) {
+        special = new HashMap<Vertex, Integer>();
+
+        // Random special vertices
+        int amountOfSpecial = vertices.size() / 3;
+        specialVertices.clear();
+        weights.clear();
+        for(int i = 0; i < amountOfSpecial; i++) {
+            specialVertices.add(vertices.get(random.nextInt(vertices.size())));
+            weights.add(random.nextInt(10));
+        }
+
+        if(specialVertices.size() != weights.size()) {
+            System.out.println("Error: not the same amount of vertices and weights");
+            System.exit(-1);
+        }
+
+        for(int i = 0; i < weights.size(); i++) {
+            Vertex key = specialVertices.get(i);
+            int value = weights.get(i);
+            special.put(key, value);
+        }
+    }
+
+    private int exhaust(ArrayList<ArrayList<Vertex>> subgroups) {
+        int coherence = 0;
+        ArrayList<ArrayList<Vertex>> winningGroups = new ArrayList<>();
+        // Every group is a possible truth assignment
+        for(ArrayList<Vertex> group : subgroups) {
+            if (coherence < calcCoherence(group))
+                winningGroups.add(group);
+            coherence = Math.max(coherence, calcCoherence(group));
+        }
+        printTruthAssignment(winningGroups.get(winningGroups.size() - 1));
+        return coherence;
+    }
+
+    private int calcCoherence(ArrayList<Vertex> subgroup) {
+        int coherence = 0;
+        for(Edge e : edges) {
+            boolean v1True = subgroups.contains(e.getV1());
+            boolean v2True = subgroups.contains(e.getV2());
+            boolean equalTruth = v1True == v2True;
+            // Positive edge: both vertices have the same truth assignment
+            // Negative edge: vertices have unequal truth assignments
+            if(positive.contains(e) && equalTruth) {
+                coherence += e.getWeight();
+            }
+            else if (!equalTruth) {
+                coherence += e.getWeight();
+            }
+        }
+
+        // Loop over special vertices
+        for(Map.Entry<Vertex, Integer> entry : special.entrySet()) {
+            Vertex v = entry.getKey();
+            int weight = entry.getValue();
+
+            if(subgroup.contains(v)) {
+                coherence += weight;
+            }
+        }
+        return coherence;
+    }
+
+    private ArrayList<ArrayList<Vertex>> getSubgroups(ArrayList<Vertex> vertices) {
+        SubsetIterator<Vertex> subsetIterator = new SubsetIterator<>(vertices);
+        ArrayList<ArrayList<Vertex>> vertexSubgroups = new ArrayList<>();
+
+        while (subsetIterator.hasNext()) {
+            vertexSubgroups.add(subsetIterator.next());
+        }
+        return vertexSubgroups;
     }
 
     /**
@@ -51,8 +145,8 @@ public class Coherence {
         List<Edge> edges = new ArrayList<>();
         positive = new ArrayList<>();
         negative = new ArrayList<>();
-        temp = new ArrayList<>();
-        fin = new ArrayList<>();
+        //temp = new ArrayList<>();
+        //fin = new ArrayList<>();
 
 
         for(int i = 0; i < n; i++) {
@@ -65,10 +159,11 @@ public class Coherence {
                 Vertex v1 = vertices.get(j);
                 Edge e = new Edge(v1, v2);
                 edges.add(e);
+                // Randomize edge's constraint
                 if (random.nextInt(2) > 0)
                     positive.add(e);
-                else
-                    negative.add(e);
+                //else
+                //    negative.add(e);
             }
         }
         graph = new Graph(vertices, edges);
@@ -77,6 +172,7 @@ public class Coherence {
 
     /**
      * Function for the exhaustive coherence algorithm
+     * Jordy is een beast
      * @param temp = the temporary list of vertices that are accepted/assigned true
      * @param index = which vertex is being considered
      * @param length = the length of the current accepted list/assigned vertices
@@ -88,7 +184,7 @@ public class Coherence {
             // compute coherence here with accepted vertices in temp, and the rejected vertices that are not in temp
             if(compute_d_coherence(temp) > best) {
                 best = compute_d_coherence(temp);
-                this.fin = temp;
+                //this.fin = temp;
                 // Uncomment below to see the possible ways of assigning the elements to accepted
                 /*
                 for(Vertex v : temp)
@@ -109,6 +205,7 @@ public class Coherence {
             return with + without;
         }
     }
+
 
     /**
      * Function that computes the coherence of a specific graph with its truth/false assignment

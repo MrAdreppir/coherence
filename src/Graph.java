@@ -5,12 +5,17 @@ import java.util.List;
  */
 public class Graph {
 
+    private int nrOfVertices;
+    private int nrOfEdges;
+
     private List<Vertex> vertices;
     private List<Edge> edges;
 
     public Graph(List<Vertex> vertices, List<Edge> edges) {
         this.vertices = vertices;
         this.edges = edges;
+        this.nrOfVertices = vertices.size();
+        this.nrOfEdges = edges.size();
     }
 
     public List<Vertex> getVertices() {
@@ -19,5 +24,13 @@ public class Graph {
 
     public List<Edge> getEdges() {
         return edges;
+    }
+
+    public int getNrOfVertices() {
+        return nrOfVertices;
+    }
+
+    public int getNrOfEdges() {
+        return nrOfEdges;
     }
 }
