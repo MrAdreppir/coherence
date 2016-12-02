@@ -1,5 +1,5 @@
 /**
- * Created by MrRoose on 25-Nov-16.
+ * Created by Daan on 25-Nov-16.
  */
 public class Vertex {
 
@@ -21,10 +21,5 @@ public class Vertex {
 
     public String getName() {
         return name;
-    }
-    
-    @Override
-    public String toString() {
-        return "Vertex " + id;
     }
 }
