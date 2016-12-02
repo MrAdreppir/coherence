@@ -2,7 +2,6 @@
  * Created by MrRoose on 25-Nov-16.
  */
 public class Vertex {
-<<<<<<< HEAD
 
     private int id;
     private String name;
@@ -28,6 +27,4 @@ public class Vertex {
     public String toString() {
         return "Vertex " + id;
     }
-=======
->>>>>>> parent of e693ee4... Added Coherence class, Edge class, Graph class and Main class.
 }
