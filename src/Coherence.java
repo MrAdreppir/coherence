@@ -65,14 +65,11 @@ public class Coherence {
         graph = new Graph(vertices, edges);
     }
     
-    
     /**
-     * Function for the exhaustive coherence algorithm
+     * 
      * @param temp = the temporary list of vertices that are accepted
      * @param index = which vertex is being considered
      * @param length = the length of the length of the current accepted list
-     * @param best = the best coherence value
-     * @param fin = final dividing of accepted and rejected vertices
      * @return 
      */
     private int coherence_exhaustive (List<Vertex> temp, int index, int length, int best, List<Vertex> fin) {
@@ -97,7 +94,7 @@ public class Coherence {
         }
     }
     /**
-     * Function that computes the coherence of a specific graph
+     * 
      * @return the coherence value for a given graph and dividing of accepted and rejected vertices
      */
     private int compute_coherence(List <Vertex> temp) {
