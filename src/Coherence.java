@@ -13,18 +13,28 @@ public class Coherence {
     private ArrayList<Edge> positive;
     private ArrayList<Edge> negative;
 
+    private ArrayList<Vertex> temp = new ArrayList<>(); // temporary dividing
+    private ArrayList<Vertex> fin = new ArrayList<>(); // final/best dividing
+
+    private ArrayList<Vertex> vertices; // all the vertices of the graph
+
     private Random random = new Random();
 
     public Coherence() {
-        createCompleteGraph(3);
-        System.out.println("Positive:");
+        createCompleteGraph(4);
+        //System.out.println("Positive:");
         for (Edge e : positive) {
-            System.out.println(e);
+            //System.out.println(e);
         }
-        System.out.println("Negative:");
+        //System.out.println("Negative:");
         for (Edge e : negative) {
-            System.out.println(e);
+            //System.out.println(e);
         }
+        vertices = (ArrayList<Vertex>) graph.getVertices();
+
+        // for every length of accepted list
+        for(int i = 0; i < 5; i++)
+            coherence_exhaustive(temp,0,i,0);
     }
 
     /**
@@ -56,7 +66,48 @@ public class Coherence {
         graph = new Graph(vertices, edges);
     }
 
-    private int coherence_exhaustive() {
-        return 0;
+
+    /**
+     * Function for the exhaustive coherence algorithm
+     * @param temp = the temporary list of vertices that are accepted
+     * @param index = which vertex is being considered
+     * @param length = the length of the length of the current accepted list
+     * @param best = the best coherence value
+     * @return
+     */
+    private int coherence_exhaustive (ArrayList<Vertex> temp, int index, int length, int best) {
+        if(temp.size() == length) {
+            // compute coherence here with accepted vertices in temp, and the rejected vertices that are not in temp
+            if(compute_coherence(temp) > best) {
+                best = compute_coherence(temp);
+                this.fin = temp;
+                // Uncomment below to see the possible ways of assigning the elements to accepted
+                /*
+                for(Vertex v : temp)
+                    System.out.print(v + " ");
+                System.out.println(); */
+            }
+            return 1;
+        }
+        else if(index >= vertices.size()) {
+            return 0;
+        }
+        else {
+            Vertex v = vertices.get(index);
+            temp.add(v);
+            int with = coherence_exhaustive(temp, index+1, length, best);
+            temp.remove(v);
+            int without = coherence_exhaustive(temp, index+1, length, best);
+            return with + without;
+        }
+    }
+
+    /**
+     * Function that computes the coherence of a specific graph
+     * @return the coherence value for a given graph and dividing of accepted and rejected vertices
+     */
+    private int compute_coherence(List <Vertex> temp) {
+        // compute coherence here
+        return 1;
     }
 }
