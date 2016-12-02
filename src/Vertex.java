@@ -5,6 +5,7 @@ public class Vertex {
 
     private int id;
     private String name;
+    private int weight;
 
     public Vertex(int id) {
         this(id, "");
