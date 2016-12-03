@@ -3,7 +3,7 @@
  */
 public class Edge {
     private Vertex v1, v2;
-    private int weight;
+    private double weight;
 
     public Edge(Vertex v1, Vertex v2) {
         this(v1, v2, 1);
@@ -15,7 +15,7 @@ public class Edge {
         this.weight = weight;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 

@@ -7,11 +7,11 @@ public class Coherence {
 
     private Graph graph;
 
-    // Constraints of edges
+    // Constraints of edges, if not in positive then negative constraint
     private ArrayList<Edge> positive;
-    private ArrayList<Edge> negative;
 
-    private Map<Vertex, Integer> special; // special vertices (d coherence)
+    // Special vertices, mapping: vertex -> weight
+    private Map<Vertex, Integer> special;
 
     //private ArrayList<Vertex> temp; // temporary dividing of vertices into accepted (the vertices that are not in temp are in rejected at that specific moment)
     //private ArrayList<Vertex> fin; // final/best truth/false assignment
@@ -149,7 +149,6 @@ public class Coherence {
         List<Vertex> vertices = new ArrayList<>();
         List<Edge> edges = new ArrayList<>();
         positive = new ArrayList<>();
-        negative = new ArrayList<>();
         //temp = new ArrayList<>();
         //fin = new ArrayList<>();
 
