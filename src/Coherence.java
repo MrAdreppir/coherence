@@ -25,16 +25,16 @@ public class Coherence {
     private int coherence;
 
     public Coherence() {
-        createCompleteGraph(4);
+        createCompleteGraph(3);
 
         vertices = (ArrayList<Vertex>) graph.getVertices();
         edges = (ArrayList<Edge>) graph.getEdges();
         subgroups = getSubgroups(vertices);
         setSpecialVertices(new ArrayList<Vertex>(), new ArrayList<Integer>());
         coherence = exhaust(subgroups);
-        System.out.println(coherence);
+        System.out.println("Coherence: " + coherence);
         // for every possible length the list of accepted vertices can have
-//        for(int i = 0; i < 5; i++)
+//        for (int i = 0; i < 5; i++)
 //            coherence_exhaustive(temp,0,i,0);
     }
 
@@ -43,22 +43,27 @@ public class Coherence {
             Vertex v1 = e.getV1();
             Vertex v2 = e.getV2();
             String out = "";
-            out += 'V' + v1.getId();
+            out += v1.toString();
             if (trueVertices.contains(v1))
-                out += " 1 ";
+                out += " (1) ";
             else
-                out += " 0 ";
+                out += " (0) ";
             if (positive.contains(e))
-                out += "-----";
+                out += "----- ";
             else
-                out += "- - -";
-            out += 'V' + v2.getId();
+                out += "- - - ";
+            out += v2.toString();
             if (trueVertices.contains(v2))
-                out += " 1 ";
+                out += " (1) ";
             else
-                out += " 0 ";
+                out += " (0) ";
             System.out.println(out);
         }
+        System.out.print("Special vertices: ");
+        for (Map.Entry<Vertex, Integer> entry : special.entrySet()) {
+            System.out.print(entry.getKey().toString() + ": " + entry.getValue() + ", ");
+        }
+        System.out.println();
     }
 
     private void setSpecialVertices(ArrayList<Vertex> specialVertices, ArrayList<Integer> weights) {
@@ -68,17 +73,17 @@ public class Coherence {
         int amountOfSpecial = vertices.size() / 3;
         specialVertices.clear();
         weights.clear();
-        for(int i = 0; i < amountOfSpecial; i++) {
+        for (int i = 0; i < amountOfSpecial; i++) {
             specialVertices.add(vertices.get(random.nextInt(vertices.size())));
             weights.add(random.nextInt(10));
         }
 
-        if(specialVertices.size() != weights.size()) {
+        if (specialVertices.size() != weights.size()) {
             System.out.println("Error: not the same amount of vertices and weights");
             System.exit(-1);
         }
 
-        for(int i = 0; i < weights.size(); i++) {
+        for (int i = 0; i < weights.size(); i++) {
             Vertex key = specialVertices.get(i);
             int value = weights.get(i);
             special.put(key, value);
@@ -89,7 +94,7 @@ public class Coherence {
         int coherence = 0;
         ArrayList<ArrayList<Vertex>> winningGroups = new ArrayList<>();
         // Every group is a possible truth assignment
-        for(ArrayList<Vertex> group : subgroups) {
+        for (ArrayList<Vertex> group : subgroups) {
             if (coherence < calcCoherence(group))
                 winningGroups.add(group);
             coherence = Math.max(coherence, calcCoherence(group));
@@ -100,13 +105,13 @@ public class Coherence {
 
     private int calcCoherence(ArrayList<Vertex> subgroup) {
         int coherence = 0;
-        for(Edge e : edges) {
-            boolean v1True = subgroups.contains(e.getV1());
-            boolean v2True = subgroups.contains(e.getV2());
+        for (Edge e : edges) {
+            boolean v1True = subgroup.contains(e.getV1());
+            boolean v2True = subgroup.contains(e.getV2());
             boolean equalTruth = v1True == v2True;
             // Positive edge: both vertices have the same truth assignment
             // Negative edge: vertices have unequal truth assignments
-            if(positive.contains(e) && equalTruth) {
+            if (positive.contains(e) && equalTruth) {
                 coherence += e.getWeight();
             }
             else if (!equalTruth) {
@@ -115,11 +120,11 @@ public class Coherence {
         }
 
         // Loop over special vertices
-        for(Map.Entry<Vertex, Integer> entry : special.entrySet()) {
+        for (Map.Entry<Vertex, Integer> entry : special.entrySet()) {
             Vertex v = entry.getKey();
             int weight = entry.getValue();
 
-            if(subgroup.contains(v)) {
+            if (subgroup.contains(v)) {
                 coherence += weight;
             }
         }
@@ -149,10 +154,10 @@ public class Coherence {
         //fin = new ArrayList<>();
 
 
-        for(int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             vertices.add(new Vertex(i));
         }
-        for(int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             for (int j = 0; j < i; j++) {
                 // The lowest number is always j
                 Vertex v2 = vertices.get(i);
@@ -180,20 +185,20 @@ public class Coherence {
      * @return
      */
     private int coherence_exhaustive (ArrayList<Vertex> temp, int index, int length, int best) {
-        if(temp.size() == length) {
+        if (temp.size() == length) {
             // compute coherence here with accepted vertices in temp, and the rejected vertices that are not in temp
-            if(compute_d_coherence(temp) > best) {
+            if (compute_d_coherence(temp) > best) {
                 best = compute_d_coherence(temp);
                 //this.fin = temp;
                 // Uncomment below to see the possible ways of assigning the elements to accepted
                 /*
-                for(Vertex v : temp)
+                for (Vertex v : temp)
                     System.out.print(v + " ");
                 System.out.println(); */
             }
             return 1;
         }
-        else if(index >= vertices.size()) {
+        else if (index >= vertices.size()) {
             return 0;
         }
         else {
@@ -214,20 +219,20 @@ public class Coherence {
      */
     private int compute_d_coherence(List <Vertex> temp) {
         int coherence = 0;
-        for(Edge e : edges) {
+        for (Edge e : edges) {
             Vertex v1 = e.getV1();
             Vertex v2 = e.getV2();
 
             // if the edge has a positive constraint and the vertices (of that edge) have the same truth assignment
-            if(positive.contains(e) && temp.contains(v1) && temp.contains(v2))
+            if (positive.contains(e) && temp.contains(v1) && temp.contains(v2))
                 coherence += e.getWeight();
-            else if(positive.contains(e) && !temp.contains(v1) && !temp.contains(v2))
+            else if (positive.contains(e) && !temp.contains(v1) && !temp.contains(v2))
                 coherence += e.getWeight();
 
             // if the edge has a negative constraint and the vertices (of that edge) do not have the same truth assignment
-            else if(negative.contains(e) && temp.contains(v1) && !temp.contains(v2))
+            else if (negative.contains(e) && temp.contains(v1) && !temp.contains(v2))
                 coherence += e.getWeight();
-            else if(negative.contains(e) && !temp.contains(v1) && temp.contains(v2))
+            else if (negative.contains(e) && !temp.contains(v1) && temp.contains(v2))
                 coherence += e.getWeight();
         }
 
