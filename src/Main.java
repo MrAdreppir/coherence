@@ -4,6 +4,6 @@
 public class Main {
 
     public static void main(String[] args) {
-        Coherence coh = new Coherence();
+        Experiment ex = new Experiment();
     }
 }

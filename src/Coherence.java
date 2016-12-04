@@ -183,32 +183,32 @@ public class Coherence {
      * @param best = the best coherence value
      * @return
      */
-    private int coherence_exhaustive (ArrayList<Vertex> temp, int index, int length, int best) {
-        if (temp.size() == length) {
-            // compute coherence here with accepted vertices in temp, and the rejected vertices that are not in temp
-            if (compute_d_coherence(temp) > best) {
-                best = compute_d_coherence(temp);
-                //this.fin = temp;
-                // Uncomment below to see the possible ways of assigning the elements to accepted
-                /*
-                for (Vertex v : temp)
-                    System.out.print(v + " ");
-                System.out.println(); */
-            }
-            return 1;
-        }
-        else if (index >= vertices.size()) {
-            return 0;
-        }
-        else {
-            Vertex v = vertices.get(index);
-            temp.add(v);
-            int with = coherence_exhaustive(temp, index+1, length, best);
-            temp.remove(v);
-            int without = coherence_exhaustive(temp, index+1, length, best);
-            return with + without;
-        }
-    }
+//    private int coherence_exhaustive (ArrayList<Vertex> temp, int index, int length, int best) {
+//        if (temp.size() == length) {
+//            // compute coherence here with accepted vertices in temp, and the rejected vertices that are not in temp
+//            if (compute_d_coherence(temp) > best) {
+//                best = compute_d_coherence(temp);
+//                //this.fin = temp;
+//                // Uncomment below to see the possible ways of assigning the elements to accepted
+//                /*
+//                for (Vertex v : temp)
+//                    System.out.print(v + " ");
+//                System.out.println(); */
+//            }
+//            return 1;
+//        }
+//        else if (index >= vertices.size()) {
+//            return 0;
+//        }
+//        else {
+//            Vertex v = vertices.get(index);
+//            temp.add(v);
+//            int with = coherence_exhaustive(temp, index+1, length, best);
+//            temp.remove(v);
+//            int without = coherence_exhaustive(temp, index+1, length, best);
+//            return with + without;
+//        }
+//    }
 
 
     /**
@@ -216,27 +216,27 @@ public class Coherence {
      * @param temp the true/false assignment of the graph
      * @return the coherence value for a given graph and dividing of accepted and rejected vertices
      */
-    private int compute_d_coherence(List <Vertex> temp) {
-        int coherence = 0;
-        for (Edge e : edges) {
-            Vertex v1 = e.getV1();
-            Vertex v2 = e.getV2();
-
-            // if the edge has a positive constraint and the vertices (of that edge) have the same truth assignment
-            if (positive.contains(e) && temp.contains(v1) && temp.contains(v2))
-                coherence += e.getWeight();
-            else if (positive.contains(e) && !temp.contains(v1) && !temp.contains(v2))
-                coherence += e.getWeight();
-
-            // if the edge has a negative constraint and the vertices (of that edge) do not have the same truth assignment
-            else if (negative.contains(e) && temp.contains(v1) && !temp.contains(v2))
-                coherence += e.getWeight();
-            else if (negative.contains(e) && !temp.contains(v1) && temp.contains(v2))
-                coherence += e.getWeight();
-        }
-
-        // implement code here for adding weights of special vertices
-
-        return coherence;
-    }
+//    private int compute_d_coherence(List <Vertex> temp) {
+//        int coherence = 0;
+//        for (Edge e : edges) {
+//            Vertex v1 = e.getV1();
+//            Vertex v2 = e.getV2();
+//
+//            // if the edge has a positive constraint and the vertices (of that edge) have the same truth assignment
+//            if (positive.contains(e) && temp.contains(v1) && temp.contains(v2))
+//                coherence += e.getWeight();
+//            else if (positive.contains(e) && !temp.contains(v1) && !temp.contains(v2))
+//                coherence += e.getWeight();
+//
+//            // if the edge has a negative constraint and the vertices (of that edge) do not have the same truth assignment
+//            else if (negative.contains(e) && temp.contains(v1) && !temp.contains(v2))
+//                coherence += e.getWeight();
+//            else if (negative.contains(e) && !temp.contains(v1) && temp.contains(v2))
+//                coherence += e.getWeight();
+//        }
+//
+//        // implement code here for adding weights of special vertices
+//
+//        return coherence;
+//    }
 }

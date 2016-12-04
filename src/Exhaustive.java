@@ -41,8 +41,10 @@ public class Exhaustive implements Strategy {
             boolean equalTruth = v1True == v2True;
             // Positive edge: both vertices have the same truth assignment
             // Negative edge: vertices have unequal truth assignments
-            if (positive.contains(e) && equalTruth) {
-                coherence += e.getWeight();
+            if (positive.contains(e)) {
+                if (equalTruth) {
+                    coherence += e.getWeight();
+                }
             }
             else if (!equalTruth) {
                 coherence += e.getWeight();
@@ -101,5 +103,17 @@ public class Exhaustive implements Strategy {
         long endTime = System.nanoTime();
         solutionTime = endTime - startTime;
         return coherence;
+    }
+
+    public List<Vertex> getSolutionTruth() {
+        return solutionTruth;
+    }
+
+    public double getCoherence() {
+        return coherence;
+    }
+
+    public double getSolutionTime() {
+        return solutionTime;
     }
 }
